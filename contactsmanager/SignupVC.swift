@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SignupVC: UIViewController {
 
@@ -48,6 +49,17 @@ class SignupVC: UIViewController {
             showAlertMessage(title: "Error", message: "Passwords do not match. Please make sure to put the same password")
             return
         }
+        
+        
+        //all information is ready to be used
+        //This is the point where we will be using the firebase authentication
+        Auth.auth().createUser(withEmail: email, password: password){authResult, error in
+            guard error == nil else{
+                self.showAlertMessage(title: "Account Created Failed", message: "\(error!.localizedDescription)")
+                return
+            }
+        }
+        
         
         
         
