@@ -7,7 +7,7 @@
 
 import UIKit
 import FirebaseCore
-
+//adding firebase library
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
