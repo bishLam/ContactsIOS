@@ -9,13 +9,13 @@ import UIKit
 import FirebaseAuth
 
 class SignupVC: UIViewController {
-
-    
     @IBOutlet weak var emailTextField: UITextField!
     
     @IBOutlet weak var passwordTextField: UITextField!
     
     @IBOutlet weak var repeatPasswordTextField: UITextField!
+    var service = Repository()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,10 +55,46 @@ class SignupVC: UIViewController {
         //This is the point where we will be using the firebase authentication
         Auth.auth().createUser(withEmail: email, password: password){authResult, error in
             guard error == nil else{
-                self.showAlertMessage(title: "Account Created Failed", message: "\(error!.localizedDescription)")
+                self.showAlertMessage(title: "Account Creation Failed", message: "\(error!.localizedDescription)")
                 return
             }
+
+            print(authResult?.user.uid)
+            //email confirmation
+            
+            
+            
+            
+
+            let registerClosure: () -> Void = {
+                let userAuthID = Auth.auth().currentUser?.uid
+                //register the user with its id in firestore
+                let user = User(id: userAuthID!,
+                                email: email,
+                                firstName: "",
+                                lastName: "",
+                                phone: "",
+                                photo: "")
+                
+                //save the object user into the database calling the repository
+                if self.service.addUser(withData: user){
+                    print("User successfully added")
+                }
+                                
+                //remove the visible view controller from backstack (making Log in visible now)
+                self.navigationController?.popViewController(animated: true)
+            }
+            
+            Auth.auth().currentUser?.sendEmailVerification{error in
+                guard error == nil else{
+                    self.showAlertMessage(title: "Error", message: "\(error?.localizedDescription)")
+                        return
+                }
+                self.showAlertMessageWithHandler(title: "Pending verification", message: "Verify your email before signing in", onCompletion: registerClosure)
+            }
         }
+        
+
         
         
         

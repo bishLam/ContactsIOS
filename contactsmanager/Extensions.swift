@@ -46,4 +46,13 @@ extension UIViewController{
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true, completion: nil)
     }
+    
+    func showAlertMessageWithHandler(title:String, message: String, onCompletion:(() -> Void)? ) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle:   .actionSheet)
+        let onCompleteAction : UIAlertAction = UIAlertAction(title: "OK", style: .default){action in
+            onCompletion?()
+        }
+        alert.addAction(onCompleteAction)
+        present(alert, animated: true, completion: nil)
+    }
 }

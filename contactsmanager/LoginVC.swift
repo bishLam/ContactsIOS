@@ -5,6 +5,7 @@
 //  Created by 13209 on 7/3/2025.
 //
 
+import FirebaseAuth
 import UIKit
 
 class LoginVC: UIViewController {
@@ -38,7 +39,29 @@ class LoginVC: UIViewController {
        return
         }
         
-//        hello
+//        her ewe implement firebase auth
+        let email = emailTextField.text!
+        let password = passwordTextField.text!
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            guard error == nil else{
+                self.showAlertMessage(title: "Error", message: "\(error!.localizedDescription)")
+                return
+            }
+            
+            //verify email confirmation
+            guard let authUser = Auth.auth().currentUser, authUser.isEmailVerified else{
+                self.showAlertMessage(title: "Verify Email", message: "We've sent you an email to verify your account. Please verify it first to log in to the account")
+                return
+            }
+            
+            // the user credentials are fine and the email has been confirmed, now we can redirect user into the home page
+            
+            //programatically navigate to home VC
+            let homeViewController = self.storyboard?.instantiateViewController(identifier: "homeVC") as? UITabBarController
+            self.view.window?.rootViewController = homeViewController
+            self.view.window?.makeKeyAndVisible()
+            
+        }
         
     }
     /*
